@@ -1,102 +1,268 @@
-#include<iostream>
-#include<fstream>
+#include<iostream> 
+#include<conio.h>
+#include<string>
+
 using namespace std;
 
-class temp{
-
-    string id,name,author,search;
-    fstream file;
+class Book {
+    private:
+        string isbn, title, author, edition, publication;
     public:
-    void addBook();
-    void showAll();
-    void extractBook();
+        void setIsbn(string a) { isbn = a; }
+        void setTitle(string b) { title = b; }
+        void setAuthor(string c) { author = c; }
+        void setEdition(string d) { edition = d; }
+        void setPublication(string e) { publication = e; }
 
-}obj;
+        string getIsbn() { return isbn; }
+        string getTitle() { return title; }
+        string getAuthor() { return author; }
+        string getEdition() { return edition; }
+        string getPublication() { return publication; }
+};
 
-int main(){
+void addBook(int counter);
+void deleteBook(int counter);
+void editBook(int counter);
+void searchBook(int counter);
+void viewAllBooks(int counter);
+void quit();
 
-    char choice;
-    cout<<"----------------------------------"<<endl;
-    cout<<"1-Show All Books"<<endl;
-    cout<<"2-Extract Book"<<endl;
-    cout<<"3-Add books(ADMIN)"<<endl;
-    cout<<"4-Exit"<<endl;
-    cout<<"----------------------------------"<<endl;
-    cout<<"Enter Your Choice :: ";
-    cin>>choice;
+int counter = 0;
 
-    switch(choice){
-        case '1':
-            cin.ignore();
-            obj.showAll();
-        break;
-        case '2':
-            cin.ignore();
-            obj.extractBook();
-        break;
-        case '3':
-            cin.ignore();
-            obj.addBook();
-        break;
-        case '4':
-            return 0;
-        break;
-        default:
-            cout<<"Invalid Choice...!";
+void increment(int a) {
+    a++;
+    counter = a;
+}
+
+void decrement(int a) {
+    a--;
+    counter = a;
+}
+
+Book books[10];
+
+int main() {
+    string choice;
+
+    cout << "LIBRARY MANAGEMENT SYSTEM\n\n";
+    cout << "[1]ADD BOOK\n";    
+    cout << "[2]DELETE BOOK\n";    
+    cout << "[3]EDIT BOOK\n";    
+    cout << "[4]SEARCH BOOK\n";    
+    cout << "[5]VIEW ALL BOOKS\n";    
+    cout << "[6]QUIT\n\n";
+
+    cout << "ENTER CHOICE: ";
+    getline(cin, choice);
+
+    if (choice == "1") {
+        addBook(counter);
+    }        
+    else if (choice == "2") {    
+        deleteBook(counter);
     }
-    
+    else if (choice == "3") {
+        editBook(counter);
+    }
+    else if (choice == "4") {
+        searchBook(counter);
+    }
+    else if (choice == "5") {
+        viewAllBooks(counter);
+    }
+    else if (choice == "6") {
+        quit();
+    }
+    else {
+        main();
+    }
 
+    getch();
     return 0;
 }
-void temp :: addBook(){
-    cout<<"\nEnter Book ID :: ";
-    getline(cin,id);
-    cout<<"Enter Book Name :: ";
-    getline(cin,name);
-    cout<<"Enter Book's Author name :: ";
-    getline(cin,author);
 
-    file.open("bookData.txt",ios :: out | ios :: app);
-    file<<id<<"*"<<name<<"*"<<author<<endl;
-    file.close();
-}
-void temp :: showAll(){
-    file.open("bookData.txt",ios :: in);
-    getline(file,id,'*');
-    getline(file,name,'*');
-    getline(file,author,'\n');
-        cout<<"\n\n";
-        cout<<"\t\t Book Id \t\t\t Book Name \t\t\t Author's Name"<<endl;
-    while(!file.eof()){
-        cout<<"\t\t "<<id<<" \t\t\t\t "<<name<<" \t\t\t "<<author<<endl;
-
-        getline(file,id,'*');
-    getline(file,name,'*');
-    getline(file,author,'\n');
+void addBook(int counter) {
+    string isbn, title, author, edition, publication;
+    cout << "ADD BOOK\n\n";
+    if (counter < 10) {
+        cout << "Enter ISBN: ";
+        getline(cin, isbn);
+        cout << "Enter Title: ";
+        getline(cin, title);
+        cout << "Enter Author: ";
+        getline(cin, author);
+        cout << "Enter Edition: ";
+        getline(cin, edition);
+        cout << "Enter Publication: ";
+        getline(cin, publication);
+        books[counter].setIsbn(isbn);
+        books[counter].setTitle(title);
+        books[counter].setAuthor(author);
+        books[counter].setEdition(edition);
+        books[counter].setPublication(publication);
+        increment(counter);
+        cout << "\nBOOK ADDED SUCCESSFULLY!\n\nPress any key to continue . . .";
+        getch();
+        main();
+    } else {
+        cout << "YOU HAVE REACHED THE MAXIMUM NUMBER OF BOOKS TO BE ADDED!\n\nPress any key to continue . . .";
+        getch();
+        main();
     }
-    file.close();
 }
-void temp :: extractBook(){
 
-    showAll();
-    cout<<"Enter Book Id :: ";
-    getline(cin,search);
+void deleteBook(int counter) {
+    string isbn;
+    int choice;
+    cout << "DELETE BOOK\n\n";
+    if (counter == 0) {
+        cout << "THERE IS NO BOOK TO DELETE!\n\nPress any key to continue . . .";
+        getch();
+        main();
+    }
+    cout << "Enter ISBN: ";
+    getline(cin, isbn);
 
-    file.open("bookData.txt",ios :: in);
-    getline(file,id,'*');
-    getline(file,name,'*');
-    getline(file,author,'\n');
-
-    cout<<"\n\n";
-    cout<<"\t\t Book Id \t\t\t Book Name \t\t\t Author's Name"<<endl;
-    while(!file.eof()){
-        if(search == id){
-            cout<<"\t\t "<<id<<" \t\t\t "<<name<<" \t\t\t "<<author<<endl;
-            cout<<"Book Extracted Successfully...!";
+    for (int i = 0; i < counter; i++) {
+        if (books[i].getIsbn() == isbn) {
+            cout << "\nBOOK FOUND\n\n";
+            cout << "Do you want to delete?\n[1]Yes\n[2]No\n\nEnter Choice: ";
+            cin >> choice;
+            if (choice == 1) {
+                books[i].setIsbn("");
+                books[i].setTitle("");
+                books[i].setAuthor("");
+                books[i].setEdition("");
+                books[i].setPublication("");
+                for (int a = i; a < counter; a++) {
+                    books[a] = books[a + 1];
+                }
+                books[9].setIsbn("");
+                books[9].setTitle("");
+                books[9].setAuthor("");
+                books[9].setEdition("");
+                books[9].setPublication("");
+                decrement(counter);
+                cout << "\nBOOK SUCCESSFULLY DELETED!\n\nPress any key to continue . . .";
+                getch();
+                main();
+            } else {
+                main();
+            }
         }
-    getline(file,id,'*');
-    getline(file,name,'*');
-    getline(file,author,'\n');
     }
-    file.close();
+    cout << "\nBOOK NOT FOUND!\n\nPress any key to continue . . .";
+    getch();
+    main();
+}
+
+void editBook(int counter) {
+   
+    string editIsbn, choice;
+    string isbn, title, author, edition, publication;
+    cout << "\nEDIT BOOK\n\n";
+    if (counter == 0) {
+        cout << "THERE IS NO BOOK TO EDIT!\n\nPress any key to continue . . .";
+        getch();
+        main();
+    }
+    cout << "Enter ISBN: ";
+    getline(cin, editIsbn);
+    for (int i = 0; i < counter; i++) {
+        if (books[i].getIsbn() == editIsbn) {
+            cout << "\nBOOK FOUND!\n\n";
+            cout << "ISBN: " << books[i].getIsbn() << endl;
+            cout << "TITLE: " << books[i].getTitle() << endl;
+            cout << "AUTHOR: " << books[i].getAuthor() << endl;
+            cout << "EDITION: " << books[i].getEdition() << endl;
+            cout << "PUBLICATION: " << books[i].getPublication() << endl;
+            cout << "\nDo you want to edit?\n[1]Yes\n[2]No\n\nEnter choice: ";
+            getline(cin, choice);
+            if (choice == "1") {
+                cout << "Enter ISBN: ";
+                getline(cin, isbn);
+                cout << "Enter Title: ";
+                getline(cin, title);
+                cout << "Enter Author: ";
+                getline(cin, author);
+                cout << "Enter Edition: ";
+                getline(cin, edition);
+                cout << "Enter Publication: ";
+                getline(cin, publication);
+                books[i].setIsbn(isbn);
+                books[i].setTitle(title);
+                books[i].setAuthor(author);
+                books[i].setEdition(edition);
+                books[i].setPublication(publication);
+                cout << "\nBOOK EDITED SUCCESSFULLY!\n\nPress any key to continue . . .";
+                getch();
+                editBook(counter);
+            } else {
+                main();
+            }
+        }
+    }
+    cout << "\nBOOK NOT FOUND!\n\nPress any key to continue . . .";
+    getch();
+    main();
+}
+
+void searchBook(int counter) {
+    string isbn;
+    int choice;
+    bool print = false;
+    cout << "SEARCH BOOK\n\n";
+    if (counter == 0) {
+        cout << "THERE IS NO BOOK TO SEARCH!\n\nPress any key to continue . . .";
+        getch();
+        main();
+    }
+    cout << "Enter ISBN: ";
+    getline(cin, isbn);
+    for (int i = 0; i < counter; i++) {
+        if (books[i].getIsbn() == isbn) {
+            cout << "\nBOOK FOUND!\n\n";
+            cout << "ISBN: " << books[i].getIsbn() << endl;
+            cout << "TITLE: " << books[i].getTitle() << endl;
+            cout << "AUTHOR: " << books[i].getAuthor() << endl;
+            cout << "EDITION: " << books[i].getEdition() << endl;
+            cout << "PUBLICATION: " << books[i].getPublication() << endl;
+            print = true;
+        }
+    }
+    if (print) {
+        cout << "\n\nPress any key to continue . . .";
+        getch();
+        main();
+    } else {
+        cout << "\nBOOK NOT FOUND!\n\nPress any key to continue . . .";
+        getch();
+        main();
+    }
+}
+
+void viewAllBooks(int counter) {
+    if (counter == 0) {
+        cout << "NO BOOKS AVAILABLE!\n\nPress any key to continue . . .";
+        getch();
+        main();
+        return;
+    }
+    cout << "VIEW ALL BOOKS\n\n";
+    for (int i = 0; i < counter; i++) {
+        cout << "BOOK DETAILS\n\n";
+        cout << "ISBN: " << books[i].getIsbn() << endl;
+        cout << "TITLE: " << books[i].getTitle() << endl;
+        cout << "AUTHOR: " << books[i].getAuthor() << endl;
+        cout << "EDITION: " << books[i].getEdition() << endl;
+        cout << "PUBLICATION: " << books[i].getPublication() << endl << endl;
+    }
+    cout << "Press any key to continue . . .";
+    getch();
+    main();
+}
+
+void quit() {
+    exit(1);
 }
